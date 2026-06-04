@@ -7,10 +7,6 @@ from datetime import datetime
 st.set_page_config(page_title="Control de Gastos Hormiga", layout="wide")
 st.title("📊 Mi Gestor de Gastos Personales")
 
-# --- ANALYTICAL CHALLENGE / PERSPECTIVA CRÍTICA ---
-# ¿Por qué categorizar tan al detalle? En economía conductual, separar "comida" de "comida extra"
-# rompe el sesgo de autoengaño. Nos ayuda a ver el costo de oportunidad real.
-
 # Inicializar el estado de la aplicación para guardar datos en memoria
 if 'categorias' not in st.session_state:
     st.session_state.categorias = ["Comida extra", "Refrescos", "Dulces o snacks", "Cuidado personal", "Gasto social", "Gasolina extra"]
@@ -47,13 +43,10 @@ if st.button("Guardar Gasto", use_container_width=True):
             "Monto": monto,
             "Descripción": descripcion
         }
-        # Añadir al DataFrame
         st.session_state.historial_gastos = pd.concat([st.session_state.historial_gastos, pd.DataFrame([nuevo_gasto])], ignore_index=True)
         st.success("¡Gasto registrado con éxito!")
     else:
         st.error("Por favor, introduce un monto mayor a 0.")
-
----
 
 # --- SECCIÓN 3: VISUALIZACIÓN Y GRÁFICOS ---
 st.header("📉 Análisis de tus Gastos")
@@ -61,7 +54,6 @@ st.header("📉 Análisis de tus Gastos")
 if not st.session_state.historial_gastos.empty:
     df = st.session_state.historial_gastos
     
-    # Métricas clave
     total_gastado = df["Monto"].sum()
     st.metric(label="Total Gastado hasta ahora", value=f"${total_gastado:,.2f}")
     
@@ -69,7 +61,6 @@ if not st.session_state.historial_gastos.empty:
     
     with col_graf1:
         st.subheader("Distribución por Categoría")
-        # Agrupar datos para el gráfico de pastel
         df_grouped = df.groupby("Categoría")["Monto"].sum().reset_index()
         fig_pie = px.pie(df_grouped, values="Monto", names="Categoría", hole=0.4,
                          color_discrete_sequence=px.colors.sequential.RdBu)
